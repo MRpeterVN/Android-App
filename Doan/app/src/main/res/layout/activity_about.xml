@@ -35,18 +35,19 @@
 
                 <TextView
                     android:id="@+id/about_header"
-                    android:layout_width="wrap_content"
+                    fontPath="fonts/interbold.otf"
+                    android:layout_width="293dp"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center_vertical"
-                    android:textSize="33sp"
                     android:layout_marginBottom="2dp"
                     android:paddingLeft="16dp"
                     android:paddingRight="16dp"
-                    android:textColor="#fbfbfb"
                     android:text="Lít sừn mu síc"
+                    android:textAppearance="@style/TextAppearance.AppCompat.Headline"
+                    android:textColor="#fbfbfb"
+                    android:textSize="33sp"
                     android:textStyle="bold"
-                    fontPath="fonts/interbold.otf"
-                    android:textAppearance="@style/TextAppearance.AppCompat.Headline" tools:ignore="MissingPrefix"/>
+                    tools:ignore="MissingPrefix" />
 
             </LinearLayout>
 

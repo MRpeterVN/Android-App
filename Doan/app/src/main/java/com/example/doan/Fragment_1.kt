@@ -13,6 +13,7 @@ import com.denzcoskun.imageslider.ImageSlider
 import com.denzcoskun.imageslider.constants.ScaleTypes
 import com.denzcoskun.imageslider.models.SlideModel
 import com.example.doan.Adapter.PlayListAdapter
+import com.example.doan.Adapter.Search_Adapter
 import com.example.doan.Adapter.SongAdapter
 import com.example.doan.Data.*
 import com.google.firebase.database.DataSnapshot
@@ -29,7 +30,8 @@ class Fragment_1 : Fragment() {
     private lateinit var autoCompleteTextView: AutoCompleteTextView
     val items2 = mutableListOf<SongData>()
     val items = mutableListOf<PlayListData>()
-    val searchDATA = mutableListOf<String>()
+    val searchDATA = mutableListOf<Search_result_Data>()
+
 
     private lateinit var searchResultLayout: View
 
@@ -58,7 +60,7 @@ class Fragment_1 : Fragment() {
         val databaseReference = database.reference.child("DataSong")
 
 
-        databaseReference.limitToFirst(10).addValueEventListener(object : ValueEventListener {
+        databaseReference.limitToFirst(20).addValueEventListener(object : ValueEventListener {
             override fun onDataChange(dataSnapshot: DataSnapshot) {
                 for (songSnapshot in dataSnapshot.children) {
                     val ten = songSnapshot.child("song_name").getValue(String::class.java).toString()
@@ -66,9 +68,6 @@ class Fragment_1 : Fragment() {
                     val img = songSnapshot.child("urlImg").getValue(String::class.java).toString()
 
                     items.add(PlayListData(img, ten, casi))
-                    searchDATA.add(ten)
-
-
                     val adapter = PlayListAdapter(items)
                     recyclerView.adapter = adapter
                     recyclerView.layoutManager = LinearLayoutManager(
@@ -100,7 +99,7 @@ class Fragment_1 : Fragment() {
         // get data
 
 
-        databaseReference.limitToFirst(10).addValueEventListener(object : ValueEventListener {
+        databaseReference.limitToFirst(20).addValueEventListener(object : ValueEventListener {
             override fun onDataChange(dataSnapshot: DataSnapshot) {
 
                 for (songSnapshot in dataSnapshot.children) {
@@ -116,7 +115,7 @@ class Fragment_1 : Fragment() {
                         LinearLayoutManager.VERTICAL,
                         false
                     )
-                    Log.e("test", img.toString())
+
 
 
                 }
@@ -164,24 +163,31 @@ class Fragment_1 : Fragment() {
 
 
 //Search
-        val search_result = mutableListOf<Search_result_Data>()
+
         databaseReference.addValueEventListener(object : ValueEventListener {
             override fun onDataChange(dataSnapshot: DataSnapshot) {
+                val searchDATA = mutableListOf<String>()
                 for (songSnapshot in dataSnapshot.children) {
                     val song_name = songSnapshot.child("song_name").getValue(String::class.java).toString()
-                    val data = Search_result_Data(song_name)
-                    search_result.add(Search_result_Data(data.toString()))
-
+                    val singer_name = songSnapshot.child("singer_name").getValue(String::class.java).toString()
+                    val item = "$song_name - $singer_name"
+                    searchDATA.add(item)
                 }
+
+                val adapter = ArrayAdapter(requireContext(), android.R.layout.simple_dropdown_item_1line, searchDATA)
+                autoCompleteTextView.setAdapter(adapter)
             }
 
             override fun onCancelled(databaseError: DatabaseError) {
                 // Xử lý khi có lỗi xảy ra
             }
         })
+
+
+
+
         val adapter = ArrayAdapter(requireContext(), android.R.layout.simple_dropdown_item_1line, searchDATA)
         autoCompleteTextView.setAdapter(adapter)
-
         autoCompleteTextView.onItemClickListener = AdapterView.OnItemClickListener { parent, view, position, id ->
             val selectedItem = parent.getItemAtPosition(position) as String
             Toast.makeText(requireContext(), "Selected: $selectedItem", Toast.LENGTH_SHORT).show()
