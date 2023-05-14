@@ -1,9 +1,10 @@
 package com.example.doan.Data
 
 data class SongData(
-    val image: Int,
-    val tenbaihat: String,
-    val tencasi: String
+
+    val image: String="",
+    val tenbaihat: String="",
+    val tencasi: String=""
 ){
 
 }

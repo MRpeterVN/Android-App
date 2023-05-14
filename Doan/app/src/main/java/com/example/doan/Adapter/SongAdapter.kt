@@ -10,6 +10,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.doan.Adapter.SongAdapter.SongViewHolder
 import com.example.doan.Data.SongData
 import com.example.doan.R
+import com.squareup.picasso.Picasso
 import kotlinx.coroutines.NonDisposableHandle.parent
 
 class SongAdapter (var ds:List<SongData>): RecyclerView.Adapter<SongViewHolder>(){
@@ -17,7 +18,8 @@ class SongAdapter (var ds:List<SongData>): RecyclerView.Adapter<SongViewHolder>(
     inner class SongViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView){
         val txtBaiHat = itemView.findViewById<TextView>(R.id.txtTenBaiHat)
         val txtCaSi = itemView.findViewById<TextView>(R.id.txtCaSi)
-        val imageView = itemView.findViewById<ImageView>(R.id.imgView)
+        val  imageView= itemView.findViewById<ImageView>(R.id.imgView)
+
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): SongViewHolder {
@@ -26,10 +28,11 @@ class SongAdapter (var ds:List<SongData>): RecyclerView.Adapter<SongViewHolder>(
     }
 
     override fun onBindViewHolder(holder: SongViewHolder, position: Int) {
-        holder.itemView.apply {
+
+         holder.itemView.apply {
             holder.txtBaiHat.text = ds[position].tenbaihat
             holder.txtCaSi.text = ds[position].tencasi
-            holder.imageView.setImageResource(ds[position].image)
+            Picasso.get().load(ds[position].image).into(holder.imageView)
 
         }
     }

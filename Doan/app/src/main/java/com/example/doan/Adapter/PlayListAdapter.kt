@@ -8,6 +8,7 @@ import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.example.doan.Data.PlayListData
 import com.example.doan.R
+import com.squareup.picasso.Picasso
 
 class PlayListAdapter (var ds:List<PlayListData>): RecyclerView.Adapter<PlayListAdapter.PlayListViewHolder>(){
 
@@ -18,7 +19,7 @@ class PlayListAdapter (var ds:List<PlayListData>): RecyclerView.Adapter<PlayList
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): PlayListViewHolder {
-        val view = LayoutInflater.from(parent.context).inflate(R.layout.layout_playlist,parent,false)
+        val view = LayoutInflater.from(parent.context).inflate(R.layout.layout_item,parent,false)
         return PlayListViewHolder(view)
     }
 
@@ -26,7 +27,7 @@ class PlayListAdapter (var ds:List<PlayListData>): RecyclerView.Adapter<PlayList
         holder.itemView.apply {
             holder.txtBaiHat.text = ds[position].tenbaihat
             holder.txtCaSi.text = ds[position].tencasi
-            holder.imageView.setImageResource(ds[position].image)
+            Picasso.get().load(ds[position].image).into(holder.imageView)
 
         }
     }

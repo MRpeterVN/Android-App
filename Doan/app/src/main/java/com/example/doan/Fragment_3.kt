@@ -27,16 +27,7 @@ class Fragment_3 : Fragment() {
 
         recyclerView.layoutManager = LinearLayoutManager(context)
         val items2 = mutableListOf<PlayListData>()
-        items2.add(PlayListData(R.drawable.chillhop_vol2_nl, "Anh Là Dân Chơi", "KHOA, Hải Ngân"))
-        items2.add(PlayListData(R.drawable.chillhop_vol2_nl, "Không Yêu Trả Dép Tôi Về ", "HuyR"))
-        items2.add(PlayListData(R.drawable.chillhop_vol2_nl, "Ghệ Iu Dấu Của Em Ơi (Sped Up)", "tlinh, 2pillz, WOKEUP"))
-        items2.add(PlayListData(R.drawable.chillhop_vol2_nl, "Lệ Cay", "Du Thiên"))
-        items2.add(PlayListData(R.drawable.chillhop_vol2_nl, "Cầu Vồng Sau Mưa", "Trường An"))
-        items2.add(PlayListData(R.drawable.chillhop_vol2_nl, "Anh Là Dân Chơi", "KHOA, Hải Ngân"))
-        items2.add(PlayListData(R.drawable.chillhop_vol2_nl, "Không Yêu Trả Dép Tôi Về ", "HuyR"))
-        items2.add(PlayListData(R.drawable.chillhop_vol2_nl, "Ghệ Iu Dấu Của Em Ơi (Sped Up)", "tlinh, 2pillz, WOKEUP"))
-        items2.add(PlayListData(R.drawable.chillhop_vol2_nl, "Lệ Cay", "Du Thiên"))
-        items2.add(PlayListData(R.drawable.chillhop_vol2_nl, "Cầu Vồng Sau Mưa", "Trường An"))
+
 
         val adapter = PlayListAdapter(items2)
         recyclerView.adapter = adapter

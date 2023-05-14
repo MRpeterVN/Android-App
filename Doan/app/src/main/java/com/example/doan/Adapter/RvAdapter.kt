@@ -13,8 +13,8 @@ import com.example.doan.R
 class RvAdapter (var ds:List<OutData>): RecyclerView.Adapter<RvAdapter.PhimViewHolder>() {
     //    class viewholder
     inner class PhimViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView){
-        val txtMieuTa = itemView.findViewById<TextView>(R.id.txtMieuTa)
-        val txtTenPhim = itemView.findViewById<TextView>(R.id.txtTenPhim)
+        val txtMieuTa = itemView.findViewById<TextView>(R.id.txtTenBaiHat)
+        val txtTenPhim = itemView.findViewById<TextView>(R.id.txtCaSi)
         val imageView = itemView.findViewById<ImageView>(R.id.imgView)
     }
 
