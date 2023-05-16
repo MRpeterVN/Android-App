@@ -27,7 +27,11 @@ class PlayListAdapter (var ds:List<PlayListData>): RecyclerView.Adapter<PlayList
         holder.itemView.apply {
             holder.txtBaiHat.text = ds[position].tenbaihat
             holder.txtCaSi.text = ds[position].tencasi
-            Picasso.get().load(ds[position].image).into(holder.imageView)
+            Picasso.get()
+                .load(ds[position].image)
+                .fit()
+                .into(holder.imageView)
+
 
         }
     }

@@ -9,6 +9,7 @@ import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.example.doan.Data.OutData
 import com.example.doan.R
+import com.squareup.picasso.Picasso
 
 class RvAdapter (var ds:List<OutData>): RecyclerView.Adapter<RvAdapter.PhimViewHolder>() {
     //    class viewholder
@@ -28,8 +29,10 @@ class RvAdapter (var ds:List<OutData>): RecyclerView.Adapter<RvAdapter.PhimViewH
         holder.itemView.apply {
             holder.txtMieuTa.text = ds[position].mieuta
             holder.txtTenPhim.text = ds[position].tenphim
-            holder.imageView.setImageResource(ds[position].image)
-
+            Picasso.get()
+                .load(ds[position].image)
+                .fit()
+                .into(holder.imageView)
 
         }
     }

@@ -4,14 +4,24 @@
     android:layout_width="match_parent"
     android:background="#212121"
     android:layout_height="match_parent"
+
 >
+
+    <FrameLayout
+        android:id="@+id/f3"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        >
+
+
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:paddingStart="10dp"
         android:paddingEnd="10dp"
-        android:orientation="vertical">
+        android:orientation="vertical"
+        >
 
 
         <LinearLayout
@@ -35,5 +45,5 @@
 
         </LinearLayout>
     </LinearLayout>
-
+    </FrameLayout>
 </ScrollView>

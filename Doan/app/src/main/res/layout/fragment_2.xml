@@ -8,6 +8,12 @@
     android:background="#212121"
     android:orientation="vertical">
 
+    <FrameLayout
+        android:id="@+id/f2"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        >
+
     <RelativeLayout
         android:id="@+id/player_bg"
         android:layout_width="match_parent"
@@ -68,22 +74,9 @@
                     app:riv_corner_radius="8dp"
                     tools:ignore="HardcodedText" />
 
-                <ImageView
-                    android:id="@+id/note_ph"
-                    android:layout_width="128dp"
-                    android:layout_height="128dp"
-                    android:layout_centerInParent="true"
-                    android:src="@drawable/ic_music_note_black_24dp" />
 
-                <ProgressBar
-                    android:id="@+id/youtubeProgressbar"
-                    style="?android:attr/progressBarStyle"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_alignParentStart="true"
-                    android:layout_alignParentTop="true"
-                    android:layout_marginStart="112dp"
-                    android:layout_marginTop="132dp" />
+
+
 
             </RelativeLayout>
 
@@ -112,20 +105,20 @@
                         android:ellipsize="end"
                         android:maxLines="1"
                         android:paddingEnd="5dp"
-                        android:text="BAI hAT"
+                        android:text="song name"
                         android:textColor="#fbfbfb"
                         android:textSize="22sp"
                         tools:ignore="MissingPrefix,RtlSymmetry" />
 
                     <!--suppress AndroidUnknownAttribute -->
                     <TextView
-                        android:id="@+id/artist_name"
+                        android:id="@+id/singer_name"
                         fontPath="fonts/interbold.otf"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:paddingEnd="5dp"
                         android:paddingBottom="10dp"
-                        android:text="baI hat"
+                        android:text="singer_name"
                         android:textColor="#80fbfbfb"
                         android:textSize="20sp"
                         tools:ignore="MissingPrefix" />
@@ -228,5 +221,7 @@
         </RelativeLayout>
 
     </RelativeLayout>
+
+    </FrameLayout>
 
 </RelativeLayout>

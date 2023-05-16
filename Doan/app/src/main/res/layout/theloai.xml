@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+<!--    <Button-->
+<!--        android:id="@+id/button5"-->
+<!--        android:layout_width="wrap_content"-->
+<!--        android:layout_height="wrap_content"-->
+<!--        android:text="Đồng quê"-->
+<!--        tools:layout_editor_absoluteX="159dp"-->
+<!--        tools:layout_editor_absoluteY="35dp" />-->
+
+<!--    <Button-->
+<!--        android:id="@+id/button6"-->
+<!--        android:layout_width="wrap_content"-->
+<!--        android:layout_height="wrap_content"-->
+<!--        android:text="pop"-->
+<!--        tools:layout_editor_absoluteX="158dp"-->
+<!--        tools:layout_editor_absoluteY="106dp" />-->
+
+<!--    <Button-->
+<!--        android:id="@+id/button7"-->
+<!--        android:layout_width="wrap_content"-->
+<!--        android:layout_height="wrap_content"-->
+<!--        android:text="rock"-->
+<!--        tools:layout_editor_absoluteX="158dp"-->
+<!--        tools:layout_editor_absoluteY="177dp" />-->
+
+<!--    <Button-->
+<!--        android:id="@+id/button8"-->
+<!--        android:layout_width="wrap_content"-->
+<!--        android:layout_height="wrap_content"-->
+<!--        android:text="remix "-->
+<!--        tools:layout_editor_absoluteX="159dp"-->
+<!--        tools:layout_editor_absoluteY="243dp" />-->
+</androidx.constraintlayout.widget.ConstraintLayout>
