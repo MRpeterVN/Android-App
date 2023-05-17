@@ -1,6 +1,7 @@
 package com.example.doan
 
 import android.content.Context
+import android.content.Intent
 import android.graphics.Color
 import android.os.Bundle
 import androidx.fragment.app.Fragment
@@ -57,6 +58,7 @@ class Fragment_2: Fragment() {
     private lateinit var repeat_button: ImageView
     private lateinit var shuffle_button: ImageView
     private lateinit var image_song: RoundedImageView
+    private  lateinit var back :ImageView
 
     private var isMusicPlaying = false
     private var lap = false
@@ -67,9 +69,11 @@ class Fragment_2: Fragment() {
 
     private var param1: String? = null
     private var param2: String? = null
-    private var getRate: String = ""
+    private var getRate: String? = ""
     private var dem: String = ""
     private var getDesc: String = ""
+    private var getName: String = ""
+    private var anh: String = ""
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -99,6 +103,7 @@ class Fragment_2: Fragment() {
         tencasi = view.findViewById<TextView>(R.id.singer_name)
         nextsong = view.findViewById<ImageView>(R.id.next_song)
         repeat_button = view.findViewById<ImageView>(R.id.repeat_button)
+        back = view.findViewById<ImageView>(R.id.back)
         shuffle_button = view.findViewById<ImageView>(R.id.shuffle_button)
         previous_song = view.findViewById<ImageView>(R.id.previous_song)
         seekBar = view.findViewById<SeekBar>(R.id.player_seekbar)
@@ -106,8 +111,18 @@ class Fragment_2: Fragment() {
         thoigianhientai = view.findViewById<TextView>(R.id.player_current_position)
         tongthoigianphat = view.findViewById<TextView>(R.id.complete_position)
 
+
+        back.setOnClickListener {
+            val fragment = Fragment_1()
+            val transaction = activity?.supportFragmentManager?.beginTransaction()
+            transaction?.replace(R.id.container, fragment)
+            transaction?.commit()
+        }
+
+
+
+
         var data = this.arguments
-        var ten = data?.get("ten").toString()
         if(data == null) {
 
 
@@ -115,25 +130,25 @@ class Fragment_2: Fragment() {
 
             val sharedPref = requireContext().getSharedPreferences("MyPrefs", Context.MODE_PRIVATE)
             getRate = sharedPref.getString("getRate", null).toString()
+            getName = sharedPref.getString("getName", null).toString()
             getDesc = sharedPref.getString("getDesc", null).toString()
             dem = sharedPref.getString("dem", null).toString()
+            anh = sharedPref.getString("anh", null).toString()
            abc= true
 
-        }else {
-            if(ten == null) {
-                val getName = data?.get("name")
+        }else{
+                 getName = data?.get("name").toString()
                 getDesc = data?.get("desc").toString()
                 getRate = data?.get("rate").toString()
                 dem = data?.get("dem").toString()
-                var anh = data?.get("anh").toString()
+                 anh = data?.get("anh").toString()
 
-                tenbaiha.setText(getDesc.toString())
+
                 Picasso.get().load(anh).into(image_song)
-            }else {
-                Toast.makeText(context, "$ten", Toast.LENGTH_SHORT).show()
             }
+        tencasi.text =getName
+tenbaiha.text = getDesc
 
-        }
 
 
 
@@ -143,19 +158,30 @@ class Fragment_2: Fragment() {
 
         productList = mutableListOf()
         dbRef = FirebaseDatabase.getInstance().reference.child("DataSong")
-
         val currentDate = Calendar.getInstance()
         val tenDaysAgo = Calendar.getInstance()
-        tenDaysAgo.add(Calendar.DATE, -10)
+        tenDaysAgo.add(Calendar.DATE, -9)
         val tenDaysAgoDateString = SimpleDateFormat("dd/MM/yyyy").format(tenDaysAgo.time)
         val nono = SimpleDateFormat("dd/MM/yyyy").format(currentDate.time)
-        val c: Query
 
-        if (dem == "1") {
-            c = dbRef.orderByChild("ngaydang").startAt(tenDaysAgoDateString).endAt(nono)
+        var c: Query
+        if(dem=="1") {
+            c =  dbRef.orderByChild("ngaydang").startAt(tenDaysAgoDateString).endAt(nono)
+        }else if(dem=="2"){
+            c =  dbRef.orderByChild("category").equalTo("dongque")
+            Toast.makeText(context, "$dem", Toast.LENGTH_SHORT).show()
+
+        }else if(dem=="3"){
+            c =  dbRef.orderByChild("category").equalTo("pop")
+        }else if(dem=="4"){
+            c =  dbRef.orderByChild("category").equalTo("rock")
+        }else if(dem=="5"){
+            c =  dbRef.orderByChild("category").equalTo("remix")
+        }else {
+            c =dbRef
         }
 
-        dbRef.orderByChild("ngaydang").limitToLast(4).addValueEventListener(object : ValueEventListener {
+       c.addValueEventListener(object : ValueEventListener {
             override fun onDataChange(snapshot: DataSnapshot) {
                 productList.clear()
 
@@ -181,9 +207,8 @@ class Fragment_2: Fragment() {
                 .setUsage(AudioAttributes.USAGE_MEDIA)
                 .build()
             setAudioAttributes(audioAttributes)
-
-
-                setDataSource("$getRate")
+            setDataSource("$getRate")!!
+//              setDataSource("https://storage.googleapis.com/laravel-test-625e8.appspot.com/Nhac/Buong-Doi-Tay-Nhau-Ra-Son-Tung-M-TP.mp3?GoogleAccessId=firebase-adminsdk-gcomm%40laravel-test-625e8.iam.gserviceaccount.com&Expires=1715529784&Signature=DhXyAbEwqSMkR7ocgwBOGhinlX39La3yMkoJr4ODJrXPYmdCs0fBOWKN8ItYS1u6jLIFJgL0PsVWO4g4nB9Zc%2F91DkVAf3OgVO9vxYBV6jmLPCVFgFf%2BKHRwJeYqXYNt%2BPy%2B3bez7LDinGDbJC3e4Ui3AaBtMsfScPKGHHhdAYj2CC4bzE7fEMQv2r2PVvk2aNih%2Bn9Uw%2BN%2FNqiu1t2LeCSxKoKy9%2FtopAuyA%2Bp8nZmg8ARQSeoPhOkKAHg6DUL52d%2Flk6WjHlZaXPzjdBR7im0ueA5KJpykqYEWVyUebF7aHEL33%2FkRJrkEvtGhGPijQXpIkh8yWa2r5JoGgsiS6Q%3D%3D")
 
                 prepareAsync()}
 
@@ -263,6 +288,7 @@ class Fragment_2: Fragment() {
             }
             // Phát nhạc
 
+
         }
 
 
@@ -272,7 +298,6 @@ class Fragment_2: Fragment() {
         nextsong.setOnClickListener {
             // Tìm vị trí của bài hát hiện tại trong productList
             val currentSongIndex = productList.indexOfFirst { it.song_name == getDesc }
-
             if (currentSongIndex < 0) {
                 // Không tìm thấy bài hát hiện tại trong productList
                 return@setOnClickListener
@@ -411,43 +436,43 @@ class Fragment_2: Fragment() {
             }
         }
 
-
+        val sharedPref = requireContext().getSharedPreferences("MyPrefs", Context.MODE_PRIVATE)
+        val editor = sharedPref.edit()
+        editor.remove("getDesc")
+        editor.remove("anh")
+        editor.remove("getRate")
+        editor.remove("getName")
+        editor.remove("dem")
+        editor.apply()
 
 
         return view
     }
 
-    override fun onSaveInstanceState(outState: Bundle) {
-        super.onSaveInstanceState(outState)
 
-        // Lưu trạng thái phát nhạc trước khi rời khỏi Fragment
-        outState.putInt("position", mediaPlayer.currentPosition)
-        outState.putBoolean("isPlaying", mediaPlayer.isPlaying)
-
-
-
-    }
 
 
 
 
     override fun onPause() {
         super.onPause()
-        val sharedPref = requireContext().getSharedPreferences("MyPrefs", Context.MODE_PRIVATE)
-        val editor = sharedPref.edit()
-        editor.putInt("currentPosition", mediaPlayer.currentPosition)
-
-        editor.putString("getDesc", getDesc)
-        editor.putString("getRate", getRate)
-        editor.putString("dem", dem)
-        editor.putInt("currentPosition", mediaPlayer.currentPosition)
-        editor.apply()
+        mediaPlayer.pause()
+        Toast.makeText(context, "adsd", Toast.LENGTH_SHORT).show()
     }
 
 
     override fun onResume() {
         super.onResume()
+        val sharedPref = requireContext().getSharedPreferences("MyPrefs", Context.MODE_PRIVATE)
+        val editor = sharedPref.edit()
+        editor.putInt("currentPosition", mediaPlayer.currentPosition)
 
+        editor.putString("getDesc", getDesc)
+        editor.putString("anh", anh)
+        editor.putString("getRate", getRate)
+        editor.putString("getName", getName)
+        editor.putString("dem", dem)
+        editor.apply()
         if(abc ==true) {
             val sharedPref = requireContext().getSharedPreferences("MyPrefs", Context.MODE_PRIVATE)
 
@@ -456,7 +481,6 @@ class Fragment_2: Fragment() {
             mediaPlayer.seekTo(currentPosition)
             seekBar.progress = currentPosition
 
-            Toast.makeText(context, "$currentPosition", Toast.LENGTH_SHORT).show()
 
         }
     }

@@ -11,16 +11,30 @@ import com.example.doan.R
 import com.squareup.picasso.Picasso
 
 class PlayListAdapter (var ds:List<PlayListData>): RecyclerView.Adapter<PlayListAdapter.PlayListViewHolder>(){
+    private lateinit var listener: onItemClickListener
 
-    inner class PlayListViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView){
+    interface  onItemClickListener{
+        fun onItemClick(position: Int)
+    }
+    fun setOnItemClickListener(clickListener: onItemClickListener){
+        listener = clickListener
+    }
+     class PlayListViewHolder(itemView: View, clickListener: onItemClickListener) : RecyclerView.ViewHolder(itemView){
         val txtBaiHat = itemView.findViewById<TextView>(R.id.txtTenBaiHat)
         val txtCaSi = itemView.findViewById<TextView>(R.id.txtCaSi)
         val imageView = itemView.findViewById<ImageView>(R.id.imgView)
+
+        init {
+            itemView.setOnClickListener {
+                clickListener?.onItemClick(adapterPosition)
+
+            }
+            }
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): PlayListViewHolder {
         val view = LayoutInflater.from(parent.context).inflate(R.layout.layout_item,parent,false)
-        return PlayListViewHolder(view)
+        return PlayListViewHolder(view,listener)
     }
 
     override fun onBindViewHolder(holder: PlayListViewHolder, position: Int) {

@@ -2,6 +2,7 @@ package com.example.doan
 
 
 import android.annotation.SuppressLint
+import android.content.Intent
 import android.os.Bundle
 import android.view.WindowManager
 import androidx.appcompat.app.AppCompatActivity
@@ -28,7 +29,10 @@ class HomeActivity : AppCompatActivity() {
                  R.id.mot -> loadFragment(Fragment_1())
                  R.id.hai-> loadFragment(Fragment_2())
                  R.id.ba -> loadFragment(Fragment_3())
-                 R.id.bon -> loadFragment(Fragment_4())
+                 R.id.bon -> {
+                     val intent = Intent(this, DangNhapActivity::class.java)
+                     startActivity(intent)
+                 }
 
              }
             true

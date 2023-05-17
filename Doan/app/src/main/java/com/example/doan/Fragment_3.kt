@@ -128,14 +128,28 @@ class Fragment_3 : Fragment() {
 
         val currentDate = Calendar.getInstance()
         val tenDaysAgo = Calendar.getInstance()
-        tenDaysAgo.add(Calendar.DATE, -10)
-        val tenDaysAgoDateString = SimpleDateFormat("yyyy/MM/dd").format(tenDaysAgo.time)
-        val nono = SimpleDateFormat("yyyy/MM/dd").format(currentDate.time)
+        tenDaysAgo.add(Calendar.DATE, -9)
+        val tenDaysAgoDateString = SimpleDateFormat("dd/MM/yyyy").format(tenDaysAgo.time)
+        val nono = SimpleDateFormat("dd/MM/yyyy").format(currentDate.time)
 
 
-        val c: Query
 
-        dbRef.orderByChild("ngaydang").startAt(tenDaysAgoDateString).endAt(nono).addValueEventListener(object : ValueEventListener {
+        var c: Query
+
+        c =dbRef
+        if(dem=="1") {
+          c =  dbRef.orderByChild("ngaydang").startAt(tenDaysAgoDateString).endAt(nono)
+        }else if(dem=="2"){
+            c =  dbRef.orderByChild("category").equalTo("dongque")
+        }else if(dem=="3"){
+            c =  dbRef.orderByChild("category").equalTo("pop")
+        }else if(dem=="4"){
+            c =  dbRef.orderByChild("category").equalTo("rock")
+        }else if(dem=="5"){
+            c =  dbRef.orderByChild("category").equalTo("remix")
+        }
+
+       c.addValueEventListener(object : ValueEventListener {
             override fun onDataChange(snapshot: DataSnapshot) {
                 productList.clear()
 
@@ -166,6 +180,7 @@ class Fragment_3 : Fragment() {
                                 putString("desc", productList[position].song_name)
                                 putString("anh", productList[position].urlImg)
                                 putString("rate", productList[position].urlFile)
+
                                 putString("dem", dem.toString())
                             }
 

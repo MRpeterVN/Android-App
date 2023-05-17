@@ -1,19 +1,21 @@
 package com.example.doan
 
 import android.annotation.SuppressLint
+import android.app.AlertDialog
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
-import android.widget.EditText
-import android.widget.ImageView
-import android.widget.Toast
+import android.view.View
+import android.widget.*
 import com.example.doan.Data.dangnhap
 import com.example.doan.databinding.ActivityDangNhapBinding
 import com.google.android.gms.auth.api.signin.GoogleSignIn
+import com.google.android.gms.auth.api.signin.GoogleSignInAccount
 import com.google.android.gms.auth.api.signin.GoogleSignInClient
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions
 import com.google.android.gms.common.api.ApiException
+import com.google.android.gms.tasks.OnCompleteListener
 import com.google.android.gms.tasks.Task
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
@@ -22,11 +24,11 @@ import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
+import com.squareup.picasso.Picasso
+import de.hdodenhof.circleimageview.CircleImageView
 
 
 class DangNhapActivity : AppCompatActivity() {
-
-
     // Khai báo biến để lưu trữ thông tin đăng nhập của người dùng
     private lateinit var dbdangnhap: DatabaseReference
     private lateinit var googleSignInClient: GoogleSignInClient
@@ -42,110 +44,120 @@ class DangNhapActivity : AppCompatActivity() {
     private val TAG = "MainActivity"
     private val ten = "MainActivity"
     private val emaill = "MainActivity"
+    private lateinit var firebaseAuth: FirebaseAuth
 
     // Phương thức onCreate() được gọi khi activity được tạo ra
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_dang_nhap)
+        val btnLogin = findViewById<Button>(R.id.btnLogIn)
+        val btnLogout = findViewById<Button>(R.id.btnLogOut)
 
 
-        val btnSignIn = findViewById<ImageView>(R.id.google)
-        txtUserName = findViewById(R.id.username)
-        txtUserEmail = findViewById(R.id.password)
+
 
         dbdangnhap = FirebaseDatabase.getInstance().getReference("dangnhap")
         // Khởi tạo GoogleSignInOptions để cấu hình yêu cầu đăng nhập của người dùng
-        val gso = GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
-            .requestEmail()
-            .build()
 
         // Khởi tạo GoogleSignInClient để đăng nhập với tài khoản Google
 
         val options = GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
-            .requestIdToken(getString(R.string.app_name))
+            .requestIdToken(getString(R.string.default_web_client_id))
             .requestEmail()
             .build()
         googleSignInClient = GoogleSignIn.getClient(this, options)
+        firebaseAuth = FirebaseAuth.getInstance()
+        val user = firebaseAuth.currentUser
 
 
         // Bắt đầu quá trình đăng nhập khi người dùng nhấn vào nút đăng nhập
 
-        btnSignIn.setOnClickListener {
+        btnLogin.setOnClickListener {
             // window infor login
             googleSignInClient.signOut().addOnCompleteListener {
                 val intent = googleSignInClient.signInIntent
-                startActivityForResult(intent, 10001)
+                startActivityForResult(intent, RC_SIGN_IN)
             }
-
         }
+
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
-        if (requestCode == 10001) {
+        if (requestCode == RC_SIGN_IN) {
             val task = GoogleSignIn.getSignedInAccountFromIntent(data)
-            val account = task.getResult(ApiException::class.java)
-            val credential = GoogleAuthProvider.getCredential(account.idToken, null)
-            FirebaseAuth.getInstance().signInWithCredential(credential)
-                .addOnCompleteListener {
-                    if (task.isSuccessful) {
-                        currentUser = FirebaseAuth.getInstance().currentUser!!
-                        val user = dangnhap(
-                            currentUser.displayName.toString(),
-                            currentUser.photoUrl.toString(),
-                            currentUser.email.toString(),
-                            "",
-                            "",
-                        )
-                        var count: Int = 0
-                        // check data exists
-                        val db = Firebase.firestore
-                        val collectionRef = db.collection("users")
-
-                        val check =
-                            collectionRef.whereEqualTo("email", currentUser.email.toString())
-                        check.get().addOnSuccessListener { documents ->
-                            for (document in documents) {
-                                count++
-                            }
-                            if (count == 0) {
-                                collectionRef.add(user)
-                                    .addOnSuccessListener { documentReference ->
-                                        Toast.makeText(
-                                            this,
-                                            "Đăng kí thành công!",
-                                            Toast.LENGTH_SHORT
-                                        ).show()
-                                    }
-                                    .addOnFailureListener { e ->
-
-                                    }
-                            }
-                            val  fragment4= Fragment_4()
-                            val dem = 1
-                            val bundle = Bundle().apply {
-                                putString("dem", dem.toString())
-                            }
-                            fragment4.arguments = bundle
-
-                            // Thực hiện thay thế Fragment hiện tại bằng Fragment đích
-                            fragment4.arguments = bundle
-                            supportFragmentManager.beginTransaction()
-                                .replace(R.id.fragment_container, fragment4)
-                                .commit()
-
-
-                        }
-                    } else {
-                        Toast.makeText(this, task.exception!!.message, Toast.LENGTH_SHORT)
-                            .show()
-                    }
-                }
+            handleSignInResult(task)
         }
     }
 
+    // Xử lý kết quả đăng nhập
+    private fun handleSignInResult(completedTask: Task<GoogleSignInAccount>) {
+        try {
+            val account = completedTask.getResult(ApiException::class.java)
+            firebaseAuthWithGoogle(account.idToken)
 
+
+        } catch (e: ApiException) {
+            // Xử lý lỗi
+            Log.e(TAG,  e.toString())
+        }
+    }
+
+    // Đăng nhập vào Firebase với token từ Google
+    private fun firebaseAuthWithGoogle(idToken: String?) {
+        val credential = GoogleAuthProvider.getCredential(idToken, null)
+        firebaseAuth.signInWithCredential(credential)
+            .addOnCompleteListener(this, OnCompleteListener { task ->
+                if (task.isSuccessful) {
+                    // Đăng nhập thành công
+                    val user = firebaseAuth.currentUser
+                    Log.d(TAG, "Đăng nhập thành công: ${user?.displayName}")
+                    val txtName = findViewById<TextView>(R.id.txtName)
+                    val image = findViewById<CircleImageView>(R.id.profile_image)
+                    val profileImage = user?.photoUrl.toString()
+                    txtName.text = "${user?.displayName}"
+
+
+                    Log.e(TAG, "Đăng nhập thất bại: ${user?.displayName}")
+
+                    Picasso.get().load(profileImage).into(image)
+                    Toast.makeText(this, "Đăng nhập thành công", Toast.LENGTH_SHORT).show()
+
+                    if (user?.displayName!!.isNotEmpty()){
+                        val btnLogout = findViewById<Button>(R.id.btnLogOut)
+                        val btnLogin = findViewById<Button>(R.id.btnLogIn)
+
+
+                        btnLogin.visibility = View.GONE
+                        btnLogout.visibility = View.VISIBLE
+                        btnLogout.setOnClickListener {
+                            val builder = AlertDialog.Builder(this)
+                            builder.setTitle("Đăng Xuất")
+                            builder.setMessage("Bạn có chắc chắn muốn đăng xuất?")
+                            builder.setPositiveButton("Đồng ý") { dialog, which ->
+                                FirebaseAuth.getInstance().signOut()
+                                txtName.text = "Bạn Chưa Đăng Nhập"
+                                image.setImageResource(R.drawable.google)
+                                btnLogin.visibility = View.VISIBLE
+                                btnLogout.visibility = View.GONE
+                                Toast.makeText(this, "Đã đăng xuất", Toast.LENGTH_SHORT).show()
+                            }
+                            builder.setNegativeButton("Hủy") { dialog, which ->
+                                // Hủy bỏ hoặc không làm gì khi người dùng hủy thông báo
+                            }
+                            val dialog = builder.create()
+                            dialog.show()
+                        }
+
+                    }
+
+                } else {
+                    // Đăng nhập thất bại
+                    Log.e(TAG, "Đăng nhập thất bại: ${task.exception?.message}")
+                }
+            })
+    }
 }
 
 
